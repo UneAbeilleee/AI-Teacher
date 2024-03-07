@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MistralAI Chatbot Interface</title>
+</head>
+<body>
+    <div>
+        <h1>MistralAI Chatbot Interface</h1>
+        <div id="chat-container">
+            <div id="chat-box"></div>
+            <input type="text" id="user-input" placeholder="Entrez votre message...">
+            <button onclick="sendMessage()">Envoyer</button>
+        </div>
+    </div>
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById('user-input').value;
+            displayMessage('user', userMessage);
+
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: userMessage }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                var chatbotResponse = data.response;
+                displayMessage('chatbot', chatbotResponse);
+            });
+        }
+
+        function displayMessage(sender, message) {
+            var chatBox = document.getElementById('chat-box');
+            var messageElement = document.createElement('div');
+            messageElement.className = sender;
+            messageElement.innerHTML = '<strong>' + sender + ':</strong> ' + message;
+            chatBox.appendChild(messageElement);
+
+            // Clear user input after sending message
+            if (sender === 'user') {
+                document.getElementById('user-input').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
