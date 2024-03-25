@@ -6,8 +6,39 @@
     <title>Interface MistralAI Chatbot</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+<style>
+    /* Style pour la barre de navigation */
+    .navbar {
+        overflow: hidden;
+        background-color: #333;
+        font-family: Arial, sans-serif;
+    }
+
+    .navbar a {
+        float: left;
+        font-size: 16px;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    .main-content {
+        padding: 16px;
+    }
+
+    /* Style pour chatbox et les boutons */
+    #chat-container {
+        margin-top: 20px;
+    }
+</style>
 <body>
-    <div>
+    <div class="navbar">
+        <a href="https://www.maths-et-tiques.fr/index.php/cours-maths" target="_blank">Mathématiques</a>
+        <a href="https://www.kartable.fr/terminale/physique-chimie/specialite" target="_blank">Physique</a>
+    </div>
+
+    <div class="main-content">
         <h1>MistralAI Chatbot Interface</h1>
         <div id="chat-container">
             <div id="chat-box"></div>

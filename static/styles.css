@@ -1,3 +1,20 @@
+
+.navbar {
+    position: fixed; /* Fixe la navbar en haut de la page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    justify-content: start; /* Alignement des liens */
+    z-index: 1000; /* S'assure que la navbar reste au-dessus des autres éléments */
+}
+/* Ajoute un espacement au haut du contenu principal pour éviter qu'il soit caché par la navbar */
+body {
+    padding-top: 50px; /* Ajustez cette valeur en fonction de la hauteur de votre navbar */
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
@@ -8,7 +25,6 @@ body {
     align-items: center;
     height: 100vh;
 }
-
 #chat-container {
     width: 400px;
     background-color: #fff;
@@ -17,29 +33,24 @@ body {
     overflow: hidden;
     padding: 20px;
 }
-
 #chat-box {
     height: 300px;
     overflow-y: auto;
 }
-
 .user, .chatbot {
     padding: 10px;
     border-radius: 8px;
     color: white;
     margin-bottom: 10px;
 }
-
 .user {
     background-color: #007fff;
     align-self: flex-end;
 }
-
 .chatbot {
     background-color: #666;
     align-self: flex-start;
 }
-
 #user-input {
     padding: 10px;
     border: none;
@@ -48,7 +59,6 @@ body {
     margin: 0 10px;
     box-sizing: border-box;
 }
-
 button {
     background-color: #007bff;
     color: white;
@@ -58,7 +68,6 @@ button {
     cursor: pointer;
     margin: 10px 0;
 }
-
 button:hover {
     background-color: #0056b3;
 }
