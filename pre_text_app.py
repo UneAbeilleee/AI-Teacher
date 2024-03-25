@@ -1,7 +1,20 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 import time
 
 app = Flask(__name__)
+
+# Configuration de la base de données SQLite (remplacez 'sqlite:///test.db' par le chemin de votre base de données)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Modèle de données utilisateur
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # Champ pour le rôle de l'utilisateur
 
 # Predefined responses
 responses = [
@@ -19,9 +32,9 @@ D) To increase the non-linearity of the model""",
     "Correct ! In a convolutional neural network (CNN), the pooling layer is used to reduce the spatial dimensions (width and height) of the input volume, while retaining important information. This helps in reducing the computational complexity of the network and controlling overfitting by reducing the number of parameters. Common pooling operations include max pooling and average pooling, where the maximum or average value in each pooling window is taken, respectively. Do you want more ?",
     """What is the role of the convolutional layer in a Convolutional Neural Network (CNN)?<br>
 Choose the correct answer:<br>
-A) It reduces the dimensionality of the data by extracting important features.
-B) It applies an activation function to introduce non-linearity into the model.
-C) It combines local features of the data using filters to create activation maps.
+A) It reduces the dimensionality of the data by extracting important features<br>
+B) It applies an activation function to introduce non-linearity into the model<br>
+C) It combines local features of the data using filters to create activation maps<br>
 D) It adjusts the model's weights by minimizing a loss function using optimization techniques.""",
     "False ! It combines local features of the data using filters to create activation maps. The convolutional layer's primary role is to extract meaningful features from the input data by convolving it with learnable filters, creating activation maps that represent different aspects of the input. This process forms the foundation for the CNN's ability to learn and understand complex visual patterns in tasks such as image recognition and object detection.",
     "My pleasure ! Tell me if you need more information about CNN !"
@@ -30,61 +43,60 @@ D) It adjusts the model's weights by minimizing a loss function using optimizati
 # Variable to keep track of the last response index
 current_response_index = -1  # Start at -1 so the first request gives the first response (index 0)
 
+# Dummy user data (replace this with a proper user authentication mechanism)
+users = {
+    "jack": {"password": "password123"},
+    "jill": {"password": "abc123"}
+}
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return redirect(url_for('login'))
 
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
-    global current_response_index  # Declare global to modify the variable outside the local scope
-    # Update the index to get the next response, loop back to 0 if at the end
-    current_response_index = (current_response_index + 1) % len(responses)
-    # Get the next response
-    next_response = responses[current_response_index]
-    # Return the response in the desired format
-    time.sleep(3)
-    return jsonify({'response': next_response})
-
-# Other parts of your Flask app remain unchanged
-from flask import Flask, request, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Modèle de données utilisateur
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-db.create_all()
-
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            return jsonify({'success': True, 'message': 'Login successful'})
+            return redirect(url_for('chatbot'))
         else:
             return jsonify({'success': False, 'message': 'Invalid username or password'})
     return render_template('login.html')
 
-# Signup route
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        role = request.form['role']  # Récupérer le rôle depuis le formulaire
         if User.query.filter_by(username=username).first():
             return jsonify({'success': False, 'message': 'Username already exists'})
         else:
-            new_user = User(username=username, password=password)
+            new_user = User(username=username, password=password, role=role)  # Ajouter le rôle à l'utilisateur
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({'success': True, 'message': 'Signup successful'})
+            return redirect(url_for('login'))
     return render_template('signup.html')
 
+@app.route('/chatbot')
+def chatbot():
+    return render_template('index.html')
+import random
+
+@app.route('/chatbot', methods=['POST'])
+def chatbot_post():
+    global current_response_index  # Declare global to modify the variable outside the local scope
+    # Update the index to get the next response, loop back to 0 if at the end
+    current_response_index = (current_response_index + 1) % len(responses)
+    # Get the next response
+    next_response = responses[current_response_index]
+    # Return the response in the desired format
+    time.sleep(random.randint(3,10))
+    return jsonify({'response': next_response})
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True, host='localhost', port=5000)

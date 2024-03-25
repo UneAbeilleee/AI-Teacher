@@ -76,6 +76,11 @@
         <input type="text" id="username" name="username"><br>
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password"><br><br>
+        <label for="role">Role:</label><br>
+        <select id="role" name="role">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+        </select><br><br>
         <input type="submit" value="Sign Up">
     </form>
     <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>

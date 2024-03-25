@@ -13,6 +13,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='user')  # Ajout de l'attribut role
 
 # Predefined responses
 responses = [
@@ -32,8 +33,8 @@ current_response_index = -1  # Start at -1 so the first request gives the first 
 
 # Dummy user data (replace this with a proper user authentication mechanism)
 users = {
-    "jack": {"password": "password123"},
-    "jill": {"password": "abc123"}
+    "jack": {"password": "password123", "role": "user"},
+    "jill": {"password": "abc123", "role": "teacher"}
 }
 
 @app.route('/')
@@ -47,10 +48,12 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            return redirect(url_for('chatbot'))
+            # Rediriger vers la page chatbot avec le rôle en tant que paramètre de requête
+            return redirect(url_for('chatbot', role=user.role))
         else:
             return jsonify({'success': False, 'message': 'Invalid username or password'})
     return render_template('login.html')
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -68,7 +71,8 @@ def signup():
 
 @app.route('/chatbot')
 def chatbot():
-    return render_template('index.html')
+    role = request.args.get('role')  # Get the role from the query parameters
+    return render_template('index.html', role=role)  # Pass the role to the template
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot_post():

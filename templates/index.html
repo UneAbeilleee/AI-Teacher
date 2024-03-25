@@ -14,6 +14,7 @@
             <input type="text" id="user-input" placeholder="Entrez votre message...">
             <button onclick="sendMessage()">Envoyer</button>
             <button onclick="sendMCQRequest()">QCM</button>
+            <p id="user-role"></p> <!-- Ajout d'une balise <p> pour afficher le rôle de l'utilisateur -->
         </div>
     </div>
 
@@ -67,30 +68,45 @@
             }
         }
 
-function displayMCQ1(mcqs) {
-    var chatBox = document.getElementById('chat-box');
+        function displayMCQ1(mcqs) {
+            var chatBox = document.getElementById('chat-box');
 
-    mcqs.forEach(function(mcq) {
-        var mcqElement = document.createElement('div');
-        mcqElement.className = 'mcq';
-        mcqElement.innerHTML = '<strong>Question:</strong> ' + mcq.question + '<br>';
-        mcq.options.forEach(function(option) {
-            mcqElement.innerHTML += '<input type="radio" name="mcq-option" value="' + option + '">' +
-                                    '<label>' + option + '</label><br>';
+            mcqs.forEach(function(mcq) {
+                var mcqElement = document.createElement('div');
+                mcqElement.className = 'mcq';
+                mcqElement.innerHTML = '<strong>Question:</strong> ' + mcq.question + '<br>';
+                mcq.options.forEach(function(option) {
+                    mcqElement.innerHTML += '<input type="radio" name="mcq-option" value="' + option + '">' +
+                                            '<label>' + option + '</label><br>';
+                });
+                chatBox.appendChild(mcqElement);
+            });
+        }
+
+        function displayMCQ(mcqs) {
+            var chatBox = document.getElementById('chat-box');
+
+            mcqs.forEach(function(mcq) {
+                var mcqElement = document.createElement('div');
+                mcqElement.className = 'mcq';
+                mcqElement.innerHTML = '<strong>Question:</strong> ' + mcq.question + '<br>';
+                chatBox.appendChild(mcqElement);
+            });
+        }
+
+        // Fonction pour récupérer le rôle de l'utilisateur à partir de l'URL et l'afficher
+        function displayUserRole() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var role = urlParams.get('role');
+            if (role) {
+                document.getElementById('user-role').innerText = 'Role: ' + role;
+            }
+        }
+
+        // Appeler la fonction pour afficher le rôle de l'utilisateur lorsque le document est entièrement chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            displayUserRole();
         });
-        chatBox.appendChild(mcqElement);
-    });
-}
-function displayMCQ(mcqs) {
-    var chatBox = document.getElementById('chat-box');
-
-    mcqs.forEach(function(mcq) {
-        var mcqElement = document.createElement('div');
-        mcqElement.className = 'mcq';
-        mcqElement.innerHTML = '<strong>Question:</strong> ' + mcq.question + '<br>';
-        chatBox.appendChild(mcqElement);
-    });
-}
 
     </script>
 </body>
