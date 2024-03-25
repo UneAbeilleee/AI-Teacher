@@ -1,10 +1,14 @@
 from flask import Flask, request, jsonify, render_template
+import time
 
 app = Flask(__name__)
 
 # Predefined responses
 responses = [
-    "Hello Jack, how can I help you today ?",
+    "Hello student, what's your name ?",
+    "Nice to meet you Jack, which year are you ?",
+    "Alright ! In what subject do you need help ?",
+    "And what is your level in this subject ?",
     "Great, in this chat I will  help you learn the concepts of CNN ! Are you ready ?",
     """In a convolutional neural network (CNN), what is the purpose of the pooling layer?<br>
 Choose the correct answer:<br>
@@ -12,7 +16,15 @@ A) To reduce overfitting by introducing dropout<br>
 B) To increase the number of feature maps<br>
 C) To reduce the spatial dimensions of the input volume<br>
 D) To increase the non-linearity of the model""",
-    "Correct ! In a convolutional neural network (CNN), the pooling layer is used to reduce the spatial dimensions (width and height) of the input volume, while retaining important information. This helps in reducing the computational complexity of the network and controlling overfitting by reducing the number of parameters. Common pooling operations include max pooling and average pooling, where the maximum or average value in each pooling window is taken, respectively."
+    "Correct ! In a convolutional neural network (CNN), the pooling layer is used to reduce the spatial dimensions (width and height) of the input volume, while retaining important information. This helps in reducing the computational complexity of the network and controlling overfitting by reducing the number of parameters. Common pooling operations include max pooling and average pooling, where the maximum or average value in each pooling window is taken, respectively. Do you want more ?",
+    """What is the role of the convolutional layer in a Convolutional Neural Network (CNN)?<br>
+Choose the correct answer:<br>
+A) It reduces the dimensionality of the data by extracting important features.
+B) It applies an activation function to introduce non-linearity into the model.
+C) It combines local features of the data using filters to create activation maps.
+D) It adjusts the model's weights by minimizing a loss function using optimization techniques.""",
+    "False ! It combines local features of the data using filters to create activation maps. The convolutional layer's primary role is to extract meaningful features from the input data by convolving it with learnable filters, creating activation maps that represent different aspects of the input. This process forms the foundation for the CNN's ability to learn and understand complex visual patterns in tasks such as image recognition and object detection.",
+    "My pleasure ! Tell me if you need more information about CNN !"
 ]
 
 # Variable to keep track of the last response index
@@ -30,6 +42,7 @@ def chatbot():
     # Get the next response
     next_response = responses[current_response_index]
     # Return the response in the desired format
+    time.sleep(3)
     return jsonify({'response': next_response})
 
 # Other parts of your Flask app remain unchanged
