@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import time
-
+from anki2 import FlashcardCreator
 app = Flask(__name__)
 
 # Configuration de la base de données SQLite (remplacez 'sqlite:///test.db' par le chemin de votre base de données)
@@ -95,6 +95,41 @@ def chatbot_post():
     # Return the response in the desired format
     time.sleep(random.randint(3,10))
     return jsonify({'response': next_response})
+
+def generate_anki_flashcard(message):
+    # Your Python code to generate an Anki flashcard
+    # Usage example
+    flashcard_creator = FlashcardCreator(deck_name='CNN Flashcards', deck_id=123456789)
+
+    # Flashcard info
+    question = "In a convolutional neural network (CNN), what is the purpose of the pooling layer?"
+    options = [
+        "A) To reduce overfitting by introducing dropout",
+        "B) To increase the number of feature maps",
+        "C) To reduce the spatial dimensions of the input volume",
+        "D) To increase the non-linearity of the model"
+    ]
+    correct_option = "Correct! In a convolutional neural network (CNN), the pooling layer is used to reduce the spatial dimensions (width and height) of the input volume, while retaining important information. This helps in reducing the computational complexity of the network and controlling overfitting by reducing the number of parameters. Common pooling operations include max pooling and average pooling, where the maximum or average value in each pooling window is taken, respectively."
+
+    # Creating the flashcard
+    quiz_flashcard = flashcard_creator.create_quiz_flashcard(question, options, correct_option)
+
+    # Adding the flashcard to the deck
+    flashcard_creator.add_flashcard(quiz_flashcard)
+
+    # Exporting the deck to a file
+    flashcard_creator.export_deck('cnn_flashcards.apkg')
+    # This is just a placeholder function for your actual implementation
+    print(f"Generating Anki flashcard with message: {message}")
+    return True
+
+@app.route('/generate_flashcard', methods=['POST'])
+def handle_generate_flashcard():
+    data = request.json
+    success = generate_anki_flashcard(data['message'])
+    return jsonify({'response': "Great"})
+    return jsonify({'success': success, 'message': 'Flashcard generation initiated'}), 200
+
 
 if __name__ == '__main__':
     with app.app_context():
