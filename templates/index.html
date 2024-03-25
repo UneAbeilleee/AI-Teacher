@@ -44,7 +44,8 @@
             <div id="chat-box"></div>
             <input type="text" id="user-input" placeholder="Entrez votre message...">
             <button onclick="sendMessage()">Envoyer</button>
-            <button onclick="sendMCQRequest()">QCM</button>
+            <button onclick="sendMessage()">QCM</button>
+            <button onclick="Anki()">Generate Flashcard</button>
             <p id="user-role"></p> <!-- Ajout d'une balise <p> pour afficher le rôle de l'utilisateur -->
         </div>
     </div>
@@ -111,6 +112,32 @@
                                             '<label>' + option + '</label><br>';
                 });
                 chatBox.appendChild(mcqElement);
+            });
+        }
+        function Anki() {
+            let userInput = document.getElementById('user-input').value;
+
+            fetch('/generate_flashcard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({message: userInput})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Flashcard generation initiated.");
+                    displayMessage('system', 'Flashcard generated successfully');
+                    // Optionally, update the displayMessage function or create a new one to handle 'system' messages differently
+                } else {
+                    console.error("Flashcard generation initiated..");
+                    displayMessage('system', 'Flashcard generated successfully');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                displayMessage('system', 'Error generating flashcard.');
             });
         }
 
